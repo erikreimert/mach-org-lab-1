@@ -2,7 +2,7 @@
  * CS:APP Data Lab
  *
  * <Please put your name and userid here>
- * 
+ *
  * bits.c - Source file with your solutions to the Lab.
  *          This is the file you will hand in to your instructor.
  *
@@ -167,6 +167,7 @@ NOTES:
    - 285 hentaigana
    - 3 additional Zanabazar Square characters */
 /* We do not support C11 <threads.h>.  */
+
 /*
  * oddBits - return word with all odd-numbered bits set to 1
  *   Legal ops: ! ~ & ^ | + << >>
@@ -174,17 +175,26 @@ NOTES:
  *   Rating: 2
  */
 int oddBits(void) {
-  return 2;
+  int a = 0x55555555;
+  // int b = (a|(a<<8))|(a<<16)|(a<<24); //works if youre starting witha 4bit word, adaptable to more bits just by deleting
+  // return 0xaaaaaaaa;
+  return ~a;
+  // 0101 0101 0101 0101 0000 0000
+  //           0101 0101 0101 0101
+  // 0101 0101 0101 0101 0101 0101
+  // 0101 0101 0101 0101 0101 0101 0000 0000
+
 }
+// printf(oddBits());
 /*
  * isTmin - returns 1 if x is the minimum, two's complement number,
  *     and 0 otherwise
  *   Legal ops: ! ~ & ^ | +
  *   Max ops: 10
  *   Rating: 1
- */
+ // */
 int isTmin(int x) {
-  return 2;
+  return !((x^(~x + 1)) + !x);
 }
 /*
  * bitXor - x^y using only ~ and &
@@ -194,8 +204,9 @@ int isTmin(int x) {
  *   Rating: 1
  */
 int bitXor(int x, int y) {
-  return 2;
+  return ~(x & y) & ~(~x & ~y);
 }
+// printf(bitXor(0, 1));
 /*
  * conditional - same as x ? y : z
  *   Example: conditional(2,4,5) = 4
@@ -226,7 +237,8 @@ int greatestBitPos(int x) {
  *   Rating: 2
  */
 int divpwr2(int x, int n) {
-    return 2;
+  int a = ~(x >> 31);
+  return ((a & x) | (~a & (x + (1 << n) + ~0))) >> n;
 }
 /*
  * isNonNegative - return 1 if x >= 0, return 0 otherwise
@@ -236,7 +248,7 @@ int divpwr2(int x, int n) {
  *   Rating: 3
  */
 int isNonNegative(int x) {
-  return 2;
+  return !(x >> 31);
 }
 /*
  * satMul2 - multiplies by 2, saturating to Tmin or Tmax if overflow
