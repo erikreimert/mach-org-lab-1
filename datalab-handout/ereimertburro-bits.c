@@ -228,6 +228,7 @@ int conditional(int x, int y, int z) {
 int greatestBitPos(int x) {
   return 2;
 }
+
 /*
  * divpwr2 - Compute x/(2^n), for 0 <= n <= 30
  *  Round toward zero
@@ -270,8 +271,10 @@ int satMul2(int x) {
  *   Rating: 3
  */
 int isLess(int x, int y) {
-  return 2;
-}
+  int signs = x^y;
+  int subtract = x + ~y +1;
+  return (((signs & x) | (~signs & subtract)) >> 31) & 1;
+  }
 /*
  * isAsciiDigit - return 1 if 0x30 <= x <= 0x39 (ASCII codes for characters '0' to '9')
  *   Example: isAsciiDigit(0x35) = 1.
@@ -296,7 +299,9 @@ int isAsciiDigit(int x) {
  */
 int trueThreeFourths(int x)
 {
-  return 2;
+  int x3 = ((x << 1) + x);
+  int add = ((1 << 2)+ ~0) & (x3 >> 31);
+  return (x3 + add) >> 2;
 }
 /*
  * ilog2 - return floor(log base 2 of x), where x > 0
@@ -306,7 +311,13 @@ int trueThreeFourths(int x)
  *   Rating: 4
  */
 int ilog2(int x) {
-  return 2;
+  int a = 0;
+  a = (!!(x >> 16)) << 4;
+  a = a + ((!!(x >> (a + 8))) << 3);
+  a = a + ((!!(x >> (a + 4))) << 2);
+  a = a + ((!!(x >> (a + 2))) << 1);
+  a = a + (!!(x >> (a + 1)));
+return a;
 }
 /*
  * float_neg - Return bit-level equivalent of expression -f for
