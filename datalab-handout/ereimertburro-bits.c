@@ -317,11 +317,11 @@ int isAsciiDigit(int x) {
  */
 int trueThreeFourths(int x)
 {
-  /* First we get the integer part of it */
+  /* first get the integer to round up */
       int rounding = (x >> 1) + (x >> 2);
-      /* Then we get the fractional part of it */
+      /* Then get the fractional part of it */
       int frac = ((((x & 1) << 1) + (x & 3)) & 7);
-      /* Then we combine them and make adjustments */
+      /* Then combine them and make adjustments */
   return rounding + ((frac >> 2) & 1) + ((!!(frac & 3)) & (rounding >> 31));
 }
 /*
@@ -352,7 +352,13 @@ return a;
  *   Rating: 2
  */
 unsigned float_neg(unsigned uf) {
- return 2;
+  int checkNan = 0x000000FF << 23; //move 1 to 23 spot
+    int f = 0x7FFFFF & uf; /*contains just the fraction value*/
+    //return uf if its all 1 and fraction is not 0
+    if((checkNan & uf) == checkNan && f)
+       return uf;
+    //else flip sign bit
+ return uf ^ (1 << 31);
 }
 /*
  * float_i2f - Return bit-level equivalent of expression (float) x
@@ -364,7 +370,24 @@ unsigned float_neg(unsigned uf) {
  *   Rating: 4
  */
 unsigned float_i2f(int x) {
-  return 2;
+    int e = 158;
+    int mask = 1<<31;
+    int sign = x&mask;
+    int frac;
+    if (x == mask)
+        return mask | (158<<23);
+    if (!x)
+        return 0;
+    if (sign)
+        x = ~x + 1;
+    while (!(x&mask)) {
+        x = x<<1;
+        e = e -1;
+    }
+    frac = (x&(~mask)) >> 8;
+    if (x&0x80 && ((x&0x7F) > 0 || frac&1))
+        frac = frac + 1;
+return sign + (e<<23) + frac;
 }
 /*
  * float_twice - Return bit-level equivalent of expression 2*f for
@@ -378,5 +401,14 @@ unsigned float_i2f(int x) {
  *   Rating: 4
  */
 unsigned float_twice(unsigned uf) {
-  return 2;
+  //uf = +-0 case.
+	if(uf==0 || uf == 0x80000000) return uf;
+	//NaN case.
+	if(((uf>>23) & 0xff) == 0xff) return uf;
+	//Tiny value, but non-zero case.
+	if(((uf>>23) & 0xff) == 0x00) {
+		return (uf & (1<<31)) | (uf<<1);
+	}
+	//Otherwise, Add 1 to exp value.
+return uf + (1<<23);
 }
