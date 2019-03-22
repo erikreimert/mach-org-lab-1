@@ -7,8 +7,8 @@ LIBS = -lm
 
 all: btest fshow ishow
 
-btest: btest.c ereimertburro-bits.c decl.c tests.c btest.h bits.h
-	$(CC) $(CFLAGS) $(LIBS) -o btest ereimertburro-bits.c btest.c decl.c tests.c
+btest: btest.c bits.c decl.c tests.c btest.h bits.h
+	$(CC) $(CFLAGS) $(LIBS) -o btest bits.c btest.c decl.c tests.c
 
 fshow: fshow.c
 	$(CC) $(CFLAGS) -o fshow fshow.c
@@ -18,7 +18,7 @@ ishow: ishow.c
 
 # Forces a recompile. Used by the driver program.
 btestexplicit:
-	$(CC) $(CFLAGS) $(LIBS) -o btest ereimertburro-bits.c btest.c decl.c tests.c 
+	$(CC) $(CFLAGS) $(LIBS) -o btest bits.c btest.c decl.c tests.c
 
 clean:
 	rm -f *.o btest fshow ishow *~
