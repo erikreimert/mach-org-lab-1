@@ -174,11 +174,13 @@ NOTES:
  *   Max ops: 8
  *   Rating: 2
  */
+// #include <stdio.h>
 int oddBits(void) {
-  int a = 0x55555555;
-  // int b = (a|(a<<8))|(a<<16)|(a<<24); //works if youre starting witha 4bit word, adaptable to more bits just by deleting
+  int a = 0x55;
+  int b = (a|(a<<8))|(a<<16)|(a<<24); //works if youre starting witha 4bit word, adaptable to more bits just by deleting
   // return 0xaaaaaaaa;
-  return ~a;
+  // return ~a;
+  return ~b;
   // 0101 0101 0101 0101 0000 0000
   //           0101 0101 0101 0101
   // 0101 0101 0101 0101 0101 0101
@@ -215,7 +217,7 @@ int bitXor(int x, int y) {
  *   Rating: 3
  */
 int conditional(int x, int y, int z) {
-  return 2;
+  return ((~(!(!x))+1)&y) | ((~(!x)+1)&z);
 }
 /*
  * greatestBitPos - return a mask that marks the position of the
@@ -299,9 +301,10 @@ int isAsciiDigit(int x) {
  */
 int trueThreeFourths(int x)
 {
-  int x3 = ((x << 1) + x);
-  int add = ((1 << 2)+ ~0) & (x3 >> 31);
-  return (x3 + add) >> 2;
+  int x3 = (x >> 2);
+  int add = ((x & 0x3)) & (x3 >> 31);
+  // printf("%d",add);
+  return (x3 + add) << 1;
 }
 /*
  * ilog2 - return floor(log base 2 of x), where x > 0
