@@ -217,7 +217,7 @@ int bitXor(int x, int y) {
  *   Rating: 3
  */
 int conditional(int x, int y, int z) {
-  return ((~(!(!x))+1)&y) | ((~(!x)+1)&z);
+  return ((~(!!x)+1)&y)|((~(!x)+1)&z);
 }
 /*
  * greatestBitPos - return a mask that marks the position of the
@@ -228,7 +228,14 @@ int conditional(int x, int y, int z) {
  *   Rating: 4
  */
 int greatestBitPos(int x) {
-  return 2;
+    x = x | x >> 1;
+    x = x | x >> 2;
+    x = x | x >> 4;
+    x = x | x >> 8;
+    x = x | x >> 16;
+    x = x & ((~x >> 1) ^ (1 << 31));
+    return x;
+
 }
 
 /*
@@ -263,7 +270,13 @@ int isNonNegative(int x) {
  *   Rating: 3
  */
 int satMul2(int x) {
-  return 2;
+   int  tmin = 0x1<<31;
+   int  sign = x>>31;
+   int x2 = x + x;
+   int over = (x^x2) >> 31;
+   int sat2 = over & (sign ^ ~tmin);
+
+return (sat2) | (~over & x2);
 }
 /*
  * isLess - if x < y  then return 1, else return 0
@@ -287,7 +300,8 @@ int isLess(int x, int y) {
  *   Rating: 3
  */
 int isAsciiDigit(int x) {
-  return 2;
+  int neg = 0x1<<31;
+  return !!((x+(~57)) & neg) & !((x+(~47)) & neg);
 }
 /*
  * trueThreeFourths - multiplies by 3/4 rounding toward 0,
