@@ -176,11 +176,13 @@ NOTES:
  */
 // #include <stdio.h>
 int oddBits(void) {
-  int a = 0x55;
-  int b = (a|(a<<8))|(a<<16)|(a<<24); //works if youre starting witha 4bit word, adaptable to more bits just by deleting
+  int a = 0x55; //1010
+
+  //moves the bit and adds 1010 to the 0000 when you move it
+  int b = (a|(a<<8))|(a<<16)|(a<<24); //works if youre starting with a 4bit word, adaptable to more bits just by deleting
   // return 0xaaaaaaaa;
   // return ~a;
-  return ~b;
+  return ~b; //flips 1010 to 0101
   // 0101 0101 0101 0101 0000 0000
   //           0101 0101 0101 0101
   // 0101 0101 0101 0101 0101 0101
@@ -247,8 +249,8 @@ int greatestBitPos(int x) {
  *   Rating: 2
  */
 int divpwr2(int x, int n) {
-  int a = ~(x >> 31);
-  return ((a & x) | (~a & (x + (1 << n) + ~0))) >> n;
+  int a = ~(x >> 31); //flip the lsb
+  return ((a & x) /*makes the lsb in x 0*/ | (~a & (x + (1 << n) + ~0))) >> n;
 }
 /*
  * isNonNegative - return 1 if x >= 0, return 0 otherwise
@@ -270,11 +272,11 @@ int isNonNegative(int x) {
  *   Rating: 3
  */
 int satMul2(int x) {
-   int  tmin = 0x1<<31;
-   int  sign = x>>31;
-   int x2 = x + x;
-   int over = (x^x2) >> 31;
-   int sat2 = over & (sign ^ ~tmin);
+   int  tmin = 0x1<<31; //sets tmin
+   int  sign = x>>31; //checks  the sign
+   int x2 = x + x; //x * 2
+   int over = (x^x2) >> 31;// checks for overflow in x when x*2
+   int sat2 = over & (sign ^ ~tmin); // checks for overflow by comparing sign to the the msb of over
 
 return (sat2) | (~over & x2);
 }
@@ -286,9 +288,9 @@ return (sat2) | (~over & x2);
  *   Rating: 3
  */
 int isLess(int x, int y) {
-  int signs = x^y;
-  int subtract = x + ~y +1;
-  return (((signs & x) | (~signs & subtract)) >> 31) & 1;
+  int signs = x^y; //check if theyre the same
+  int subtract = x + ~y +1; // x + twos complement of y
+  return (((signs & x) | (~signs & subtract)) >> 31) & 1; //returns 0 if x and y are the same and returns 1 if it is less
   }
 /*
  * isAsciiDigit - return 1 if 0x30 <= x <= 0x39 (ASCII codes for characters '0' to '9')
@@ -315,10 +317,12 @@ int isAsciiDigit(int x) {
  */
 int trueThreeFourths(int x)
 {
-  int x3 = (x >> 2);
-  int add = ((x & 0x3)) & (x3 >> 31);
-  // printf("%d",add);
-  return (x3 + add) << 1;
+  /* First we get the integer part of it */
+      int rounding = (x >> 1) + (x >> 2);
+      /* Then we get the fractional part of it */
+      int frac = ((((x & 1) << 1) + (x & 3)) & 7);
+      /* Then we combine them and make adjustments */
+  return rounding + ((frac >> 2) & 1) + ((!!(frac & 3)) & (rounding >> 31));
 }
 /*
  * ilog2 - return floor(log base 2 of x), where x > 0
