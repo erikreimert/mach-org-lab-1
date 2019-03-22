@@ -402,9 +402,11 @@ return sign + (e<<23) + frac;
  */
 unsigned float_twice(unsigned uf) {
   //uf = +-0 case.
-	if(uf==0 || uf == 0x80000000) return uf;
+	if(uf==0 || uf == 0x80000000)
+  return uf;
 	//NaN case.
-	if(((uf>>23) & 0xff) == 0xff) return uf;
+	if(((uf>>23) & 0xff) == 0xff)
+  return uf;
 	//Tiny value, but non-zero case.
 	if(((uf>>23) & 0xff) == 0x00) {
 		return (uf & (1<<31)) | (uf<<1);
